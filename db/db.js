@@ -7,4 +7,5 @@ const todos = [
     }
 ];
 
-export default todos;
+// export default todos;
+// node_modules/.bin/babel-node app.js

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Cal App</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+</head>
+
+<body>
+  <nav>
+    <div class="nav-wrapper">
+      <a class="brand-logo center">Calculate App</a>
+    </div>
+  </nav>
+  <ul></ul>
+  <div class="container" style="text-align:center; margin-top: 40px">
+    <form>
+      <div>
+        <label style="margin-right: 20px">Enter A : </label>
+        <input required type="number" style="width: 300px;" id="a" autofocus>
+        <br>
+        <label style="margin-right: 20px">Enter B : </label>
+        <input required type="number" style="width: 300px;" id="b" autofocus>
+      </div>
+      <div style="border: 2px solid #ACB6F3; border-radius: 10px; width: 55%; margin-left: 160px">
+        <input onclick="calculateNum()" type="radio" id="add" name="contact" value='add'>
+        <label for="add" style="margin-right: 20px"> + </label>
+
+        <input onclick="calculateNum()" type="radio" id="min" name="contact" value='min'>
+        <label for="min" style="margin-right: 20px"> - </label>
+
+        <input onclick="calculateNum()" type="radio" id="mul" name="contact" value='mul'>
+        <label for="mul" style="margin-right: 20px"> * </label>
+
+        <input onclick="calculateNum()" type="radio" id="div" name="contact" value='div'>
+        <label for="div" style="margin-right: 20px"> / </label>
+
+        <input onclick="calculateNum()" type="radio" id="pow" name="contact" value='pow'>
+        <label for="pow" style="margin-right: 20px"> Pow </label>
+      </div>
+      <div>
+        <label>Result : </label>
+        <input type="text" disabled style="width: 350px; margin-left: 40px; margin-top: 40px" id="result" autofocus>
+      </div>
+      <div>
+        <input type="checkbox" id="cloud"  onclick="cloudCheck()" name="cloud_check" value=''>
+        <label for="cloud" style="margin-right: 20px"> Cloud Drive </label>
+
+        <p id="text" style="display:none">Checkbox is CHECKED!</p>
+      </div>
+      <button style="margin: 20px" class="waves-effect waves-light btn" onclick="readeFile()" type="submit">Load</button>
+      <button style="margin: 20px" class="waves-effect waves-light btn" onclick="writeFile()" type="submit">Save</button>
+    </form>
+  </div>
+
+  <script>
+    
+    function calculateNum() {
+      // console.log("Check num")
+      // e.preventDefault();
+      const num_a = parseInt(document.querySelector('#a').value, 10)
+      const num_b = parseInt(document.querySelector('#b').value, 10)
+      var result;
+      if (document.querySelector('#add').checked === true) {
+        result = num_a + num_b
+        document.querySelector('#result').value = result
+      }
+      else if (document.querySelector('#min').checked === true) {
+        result = num_a - num_b
+        document.querySelector('#result').value = result
+      }
+      else if (document.querySelector('#mul').checked === true) {
+        result = num_a * num_b
+        document.querySelector('#result').value = result
+      }
+      else if (document.querySelector('#div').checked === true) {
+        if (num_b === 0) {
+          // alert("You can't division by 0 ")
+          result = "Cannot find the answer"
+        }
+        else {
+          result = num_a / num_b
+        }
+
+        document.querySelector('#result').value = result
+      }
+      else if (document.querySelector('#pow').checked === true) {
+        result = Math.pow(num_a, num_b)
+        document.querySelector('#result').value = result;
+      }
+      return result;
+    }
+
+    function writeFile() {
+      const a = document.querySelector('#a').value;
+      const b = document.querySelector('#b').value;
+      // const radios = document.getElementsByName('contact');
+      const radios = ['#add', '#min', '#mul', '#div', '#pow']
+      var value;
+      for (var i in radios) {
+        if (document.querySelector(radios[i]).checked === true) {
+          value = document.querySelector(radios[i]).value;
+        }
+      }
+      const result_value = document.querySelector('#result').value;
+      const localstorage = JSON.stringify({ value_a: a, value_b: b, operator_value: value, result_value: calculateNum() })
+      console.log(localstorage)
+      if (a != "" && b != "" && value != null) {
+        // console.log("validate")
+        const fs = require('fs');
+        fs.writeFile("./cal_app.json", localstorage, function (err) {
+          if (err) {
+            return console.log(err);
+          }
+          console.log("--Saved!--");
+        });
+      }
+      else {
+        alert("Please fill all field")
+      }
+
+    }
+    
+    function readeFile(){
+      const fs = require('fs');
+
+      let rawdata = fs.readFileSync('./cal_app.json');  
+      let cal_data = JSON.parse(rawdata);  
+      console.log(cal_data);  
+      document.querySelector('#a').value = cal_data["value_a"]
+      document.querySelector('#b').value = cal_data["value_b"]
+      // document.querySelector('#'.cal_data["operator_value"]).checked === true
+      console.log(cal_data["operator_value"])
+      document.querySelector('#result').value = cal_data["result_value"]
+
+    }
+
+    function cloudCheck() {
+      var checkBox = document.getElementById("cloud");
+      var text = document.getElementById("text");
+      if (checkBox.checked == true){
+          text.style.display = "block";
+      } else {
+        text.style.display = "none";
+      }
+    }
+
+  </script>
+</body>
