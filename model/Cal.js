@@ -7,7 +7,9 @@ const callAppSchema = new Schema(
         "value_b": String,
         "operator_value": String,
         "result_value": Number
+    },{
+        collection: 'cal_app'
     }
 );
 
-module.exports = cal_app = mongoose.model("cal_app", callAppSchema);
+module.exports = mongoose.model("callAppSchema", callAppSchema);
